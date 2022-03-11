@@ -50,8 +50,12 @@ class ViewsTests(TestCase):
                 for i in range(FIRST_PAGE_POSTS + SECOND_PAGE_POSTS - 1)
             ]
         )
-        cls.one_post = Post.objects.create(author=cls.user, text='Тестовый пост',
-                                           group=cls.group, image=cls.uploaded)
+        cls.one_post = Post.objects.create(
+            author=cls.user,
+            text='Тестовый пост',
+            group=cls.group,
+            image=cls.uploaded
+        )
         cls.urls_paginator = {
             'posts:index': {},
             'posts:profile': {'username': cls.user},
@@ -154,8 +158,7 @@ class ViewsTests(TestCase):
                 for value, expected in form_fields.items():
                     with self.subTest(value=value):
                         form_field = (
-                            response
-                                .context
+                            response.context
                                 .get('form')
                                 .fields.get(value)
                         )
@@ -166,13 +169,18 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
     def test_comments_shows_on_page_after_creating(self):
-        comments_count = Comment.objects.filter(post__id=FIRST_PAGE_POSTS + SECOND_PAGE_POSTS).count()
+        comments_count = Comment.objects.filter(
+            post__id=FIRST_PAGE_POSTS + SECOND_PAGE_POSTS
+        ).count()
         self.test_comment = Comment.objects.create(
             post=self.one_post,
             author=self.user,
             text='это комментарий'
         )
-        self.assertEqual(Comment.objects.filter(post__id=14).count(), comments_count + 1)
+        self.assertEqual(
+            Comment.objects.filter(post__id=14).count(),
+            comments_count + 1
+        )
 
     def test_cache_works_correctly(self):
         cached_post = Post.objects.create(

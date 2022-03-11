@@ -6,7 +6,6 @@ from django.views.decorators.cache import cache_page
 from .forms import CommentForm, PostForm
 from .models import Comment, Follow, Group, Post, User
 
-
 NUMBER_OF_POSTS = 10
 
 
@@ -119,7 +118,10 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
-    following_authors = Follow.objects.filter(user=request.user).values_list('author_id', flat=True)
+    following_authors = Follow.objects.filter(user=request.user).values_list(
+        'author_id',
+        flat=True
+    )
     following_posts = Post.objects.filter(author_id__in=following_authors)
     paginator = Paginator(following_posts, NUMBER_OF_POSTS)
     page_number = request.GET.get('page')

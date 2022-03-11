@@ -8,7 +8,7 @@ from django.test import Client, TestCase
 from django.test import override_settings
 from django.urls import reverse
 
-from posts.models import Comment, Follow, Group, Post
+from posts.models import Follow, Post
 
 User = get_user_model()
 
