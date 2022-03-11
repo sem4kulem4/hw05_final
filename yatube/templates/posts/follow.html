@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load cache %}
+{% block title %}Ваши подписки{% endblock %}
+{% block header %}Последние обновления на сайте{% endblock %}
+{% cache 20 index_page %}
+{% block content %}
+  {% include 'posts/includes/switcher.html' %}
+  {% for post in page_obj %}
+    {% include 'includes/article.html' with show_url=True %}
+      <a href="{% url 'posts:post_detail' post.pk %}">Подробная информация</a>
+    {% if not forloop.last %}<hr>{% endif %}
+  {% endfor %}
+{% include 'posts/includes/paginator.html' %}
+{% endblock content %}
+{% endcache %}
