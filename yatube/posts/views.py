@@ -11,7 +11,7 @@ NUMBER_OF_POSTS = 10
 
 @cache_page(20)
 def index(request):
-    post_list = Post.objects.all()
+    post_list = Post.objects.select_related('group').all()
     paginator = Paginator(post_list, NUMBER_OF_POSTS)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -40,23 +40,16 @@ def profile(request, username):
     paginator = Paginator(user_posts, NUMBER_OF_POSTS)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    if request.user.is_anonymous or request.user == author:
-        context = {
-            'page_obj': page_obj,
-            'author': author,
-            'not_show_button': True
-        }
-        return render(request, 'posts/profile.html', context)
-    if Follow.objects.filter(user=request.user, author=author).exists():
-        following = True
-    else:
-        following = False
     context = {
         'page_obj': page_obj,
         'author': author,
-        'following': following,
-        'not_show_button': False
+        'not_show_button': True
     }
+    if request.user.is_anonymous or request.user == author:
+        return render(request, 'posts/profile.html', context)
+    following = Follow.objects.filter(user=request.user, author=author).exists()
+    context['following'] = following
+    context['not_show_button'] = False
     return render(request, 'posts/profile.html', context)
 
 
@@ -137,10 +130,9 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     follower = request.user
-    author = User.objects.get(username=username)
-    if Follow.objects.filter(user=follower, author=author).exists():
-        return render(request, 'posts/index.html')
-    if follower == author:
+    author = get_object_or_404(User, username=username)
+    if (Follow.objects.filter(user=follower, author=author).exists()
+            or follower == author):
         return render(request, 'posts/index.html')
     Follow.objects.create(user=follower, author=author)
     return render(request, 'posts/follow.html')
@@ -149,6 +141,6 @@ def profile_follow(request, username):
 @login_required
 def profile_unfollow(request, username):
     follower = request.user
-    author = User.objects.get(username=username)
+    author = get_object_or_404(User, username=username)
     Follow.objects.filter(user=follower, author=author).delete()
     return render(request, 'posts/follow.html')

@@ -11,9 +11,6 @@ from django.urls import reverse
 from posts.models import Follow, Post
 
 User = get_user_model()
-
-FIRST_PAGE_POSTS = 10
-SECOND_PAGE_POSTS = 4
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
 
@@ -37,7 +34,6 @@ class TestFollowing(TestCase):
 
     def setUp(self):
         cache.clear()
-        self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.follower)
 
@@ -45,10 +41,23 @@ class TestFollowing(TestCase):
         response = self.authorized_client.get(reverse('posts:follow_index'))
         self.assertIn(self.one_post, response.context['page_obj'])
 
+    def test_follow_creates_data(self):
+        number_of_follows = Follow.objects.count()
+        another_author = User.objects.create_user(username='another_author')
+        self.authorized_client.get(reverse('posts:profile_follow', kwargs={'username': another_author}))
+        after_following = Follow.objects.count()
+        self.assertEqual(number_of_follows + 1, after_following)
+
     def test_unfollow_for_authorized(self):
         self.sub.delete()
         response = self.authorized_client.get(reverse('posts:follow_index'))
         self.assertNotIn(self.one_post, response.context['page_obj'])
+
+    def test_unfollow_delete_data(self):
+        number_of_follows = Follow.objects.count()
+        self.authorized_client.get(reverse('posts:profile_unfollow', kwargs={'username': self.author}))
+        after_following = Follow.objects.count()
+        self.assertEqual(number_of_follows, after_following+1)
 
     def test_new_post_for_followers_exist_not_for_others(self):
         self.unfollowed_user = User.objects.create_user(username='unfollowed')

@@ -1,8 +1,11 @@
+from http import HTTPStatus
+
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from posts.models import Group, Post
+from posts.models import Comment, Group, Post
+
 
 User = get_user_model()
 
@@ -77,5 +80,28 @@ class PostCreateFormTests(TestCase):
             data=edit_form_data,
             follow=True
         )
-        changed_post = Post.objects.get(pk=1)
-        self.assertEqual(changed_post.text, edit_form_data['text'])
+        self.post = Post.objects.get(pk=1)
+        self.assertEqual(self.post.text, edit_form_data['text'])
+
+    def test_add_comments_only_by_authorized(self):
+        response = self.guest_client.get('posts:add_comment', post_id=1)
+        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+
+    def test_comments_shows_on_page_after_creating(self):
+        self.one_post = Post.objects.create(
+            author=self.user,
+            text='Тестовый пост',
+            group=self.group
+        )
+        comments_count = Comment.objects.filter(
+            post__id=self.one_post.id
+        ).count()
+        self.test_comment = Comment.objects.create(
+            post=self.one_post,
+            author=self.user,
+            text='это комментарий'
+        )
+        self.assertEqual(
+            Comment.objects.filter(post__id=self.one_post.id).count(),
+            comments_count + 1
+        )

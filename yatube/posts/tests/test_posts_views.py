@@ -159,28 +159,10 @@ class ViewsTests(TestCase):
                     with self.subTest(value=value):
                         form_field = (
                             response.context
-                                    .get('form')
-                                    .fields.get(value)
+                                .get('form')
+                                .fields.get(value)
                         )
                         self.assertIsInstance(form_field, expected)
-
-    def test_add_comments_only_by_authorized(self):
-        response = self.guest_client.get('posts:add_comment', post_id=14)
-        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
-
-    def test_comments_shows_on_page_after_creating(self):
-        comments_count = Comment.objects.filter(
-            post__id=FIRST_PAGE_POSTS + SECOND_PAGE_POSTS
-        ).count()
-        self.test_comment = Comment.objects.create(
-            post=self.one_post,
-            author=self.user,
-            text='это комментарий'
-        )
-        self.assertEqual(
-            Comment.objects.filter(post__id=14).count(),
-            comments_count + 1
-        )
 
     def test_cache_works_correctly(self):
         cached_post = Post.objects.create(
