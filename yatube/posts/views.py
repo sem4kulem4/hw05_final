@@ -47,7 +47,10 @@ def profile(request, username):
     }
     if request.user.is_anonymous or request.user == author:
         return render(request, 'posts/profile.html', context)
-    following = Follow.objects.filter(user=request.user, author=author).exists()
+    following = Follow.objects.filter(
+        user=request.user,
+        author=author
+    ).exists()
     context['following'] = following
     context['not_show_button'] = False
     return render(request, 'posts/profile.html', context)

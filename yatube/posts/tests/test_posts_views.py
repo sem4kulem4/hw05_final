@@ -1,6 +1,5 @@
 import shutil
 import tempfile
-from http import HTTPStatus
 
 from django import forms
 from django.contrib.auth import get_user_model
@@ -11,7 +10,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from django.test import override_settings
 
-from posts.models import Comment, Group, Post
+from posts.models import Group, Post
 
 User = get_user_model()
 
@@ -159,8 +158,8 @@ class ViewsTests(TestCase):
                     with self.subTest(value=value):
                         form_field = (
                             response.context
-                                .get('form')
-                                .fields.get(value)
+                                    .get('form')
+                                    .fields.get(value)
                         )
                         self.assertIsInstance(form_field, expected)
 

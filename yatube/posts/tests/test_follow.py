@@ -44,7 +44,10 @@ class TestFollowing(TestCase):
     def test_follow_creates_data(self):
         number_of_follows = Follow.objects.count()
         another_author = User.objects.create_user(username='another_author')
-        self.authorized_client.get(reverse('posts:profile_follow', kwargs={'username': another_author}))
+        self.authorized_client.get(reverse(
+            'posts:profile_follow',
+            kwargs={'username': another_author}
+        ))
         after_following = Follow.objects.count()
         self.assertEqual(number_of_follows + 1, after_following)
 
@@ -55,9 +58,12 @@ class TestFollowing(TestCase):
 
     def test_unfollow_delete_data(self):
         number_of_follows = Follow.objects.count()
-        self.authorized_client.get(reverse('posts:profile_unfollow', kwargs={'username': self.author}))
+        self.authorized_client.get(reverse(
+            'posts:profile_unfollow',
+            kwargs={'username': self.author}
+        ))
         after_following = Follow.objects.count()
-        self.assertEqual(number_of_follows, after_following+1)
+        self.assertEqual(number_of_follows, after_following + 1)
 
     def test_new_post_for_followers_exist_not_for_others(self):
         self.unfollowed_user = User.objects.create_user(username='unfollowed')
