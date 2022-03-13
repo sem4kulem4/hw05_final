@@ -127,7 +127,7 @@ def follow_index(request):
         'page_obj': page_obj,
         'title': 'Ваши подписки',
         'following': True,
-        'follow':True
+        'follow': True
     }
     return render(request, 'posts/follow.html', context)
 

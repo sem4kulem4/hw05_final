@@ -190,8 +190,7 @@ class ViewsTests(TestCase):
             data=form_data,
             follow=True
         )
-        response = self.authorized_client.get(reverse(
-                'posts:post_detail',
-                kwargs={'post_id': 14}
-        ))
+        response = self.authorized_client.get(
+            reverse('posts:post_detail', kwargs={'post_id': 14})
+        )
         self.assertEqual(response.context.get('post').image, 'posts/small.gif')

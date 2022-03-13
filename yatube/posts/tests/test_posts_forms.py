@@ -92,7 +92,10 @@ class PostCreateFormTests(TestCase):
             'posts:add_comment',
             kwargs={'post_id': self.one_post.id}),
             data={'text': 'это комментарий'})
-        self.assertEqual(comments_count, Comment.objects.filter(post__id=self.one_post.id).count())
+        self.assertEqual(
+            comments_count,
+            Comment.objects.filter(post__id=self.one_post.id).count()
+        )
 
     def test_comments_shows_on_page_after_creating(self):
         self.one_post = Post.objects.create(
