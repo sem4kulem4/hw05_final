@@ -23,7 +23,7 @@ class TestFollowing(TestCase):
         cls.author = User.objects.create_user(username='author')
         cls.one_post = Post.objects.create(
             author=cls.author,
-            text='Тестовый пост'
+            text='Тестовый пост',
         )
         cls.sub = Follow.objects.create(user=cls.follower, author=cls.author)
 
@@ -42,13 +42,13 @@ class TestFollowing(TestCase):
         self.assertIn(self.one_post, response.context['page_obj'])
 
     def test_follow_creates_data(self):
-        number_of_follows = Follow.objects.count()
         another_author = User.objects.create_user(username='another_author')
+        number_of_follows = Follow.objects.filter(user=self.follower, author=another_author).count()
         self.authorized_client.get(reverse(
             'posts:profile_follow',
             kwargs={'username': another_author}
         ))
-        after_following = Follow.objects.count()
+        after_following = Follow.objects.filter(user=self.follower, author=another_author).count()
         self.assertEqual(number_of_follows + 1, after_following)
 
     def test_unfollow_for_authorized(self):
@@ -57,12 +57,12 @@ class TestFollowing(TestCase):
         self.assertNotIn(self.one_post, response.context['page_obj'])
 
     def test_unfollow_delete_data(self):
-        number_of_follows = Follow.objects.count()
+        number_of_follows = Follow.objects.filter(user=self.follower, author=self.author).count()
         self.authorized_client.get(reverse(
             'posts:profile_unfollow',
             kwargs={'username': self.author}
         ))
-        after_following = Follow.objects.count()
+        after_following = Follow.objects.filter(user=self.follower, author=self.author).count()
         self.assertEqual(number_of_follows, after_following + 1)
 
     def test_new_post_for_followers_exist_not_for_others(self):

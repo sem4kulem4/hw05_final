@@ -179,3 +179,19 @@ class ViewsTests(TestCase):
         response_third = self.guest_client.get(reverse('posts:index'))
         content_third = response_third.content
         self.assertFalse(content_first == content_third)
+
+    def test_image(self):
+        form_data = {
+            'text': 'Тестовый введенный текст',
+            'image': self.uploaded
+        }
+        self.authorized_client.post(
+            reverse('posts:post_create'),
+            data=form_data,
+            follow=True
+        )
+        response = self.authorized_client.get(reverse(
+                'posts:post_detail',
+                kwargs={'post_id': 14}
+        ))
+        self.assertEqual(response.context.get('post').image, 'posts/small.gif')

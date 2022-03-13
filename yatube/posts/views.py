@@ -17,6 +17,7 @@ def index(request):
     page_obj = paginator.get_page(page_number)
     context = {
         'page_obj': page_obj,
+        'index': True
     }
     return render(request, 'posts/index.html', context)
 
@@ -125,7 +126,8 @@ def follow_index(request):
     context = {
         'page_obj': page_obj,
         'title': 'Ваши подписки',
-        'following': True
+        'following': True,
+        'follow':True
     }
     return render(request, 'posts/follow.html', context)
 
