@@ -3,10 +3,10 @@ from django.test import TestCase
 
 from ..models import Group, Post
 
-
 User = get_user_model()
 
 CUT_OFF = 15
+
 
 class PostModelTest(TestCase):
     @classmethod

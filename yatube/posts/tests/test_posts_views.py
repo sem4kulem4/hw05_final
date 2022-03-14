@@ -182,4 +182,3 @@ class ViewsTests(TestCase):
         response_third = self.guest_client.get(reverse('posts:index'))
         content_third = response_third.content
         self.assertFalse(content_first == content_third)
-

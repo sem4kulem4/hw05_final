@@ -91,7 +91,10 @@ class PostCreateFormTests(TestCase):
             data=edit_form_data,
             follow=True
         )
-        self.assertEqual(Post.objects.get(pk=self.post.id).text, edit_form_data['text'])
+        self.assertEqual(
+            Post.objects.get(pk=self.post.id).text,
+            edit_form_data['text']
+        )
 
     def test_cannot_add_comments_by_anonymous(self):
         self.one_post = Post.objects.create(
@@ -155,8 +158,8 @@ class PostCreateFormTests(TestCase):
         )
         response = self.authorized_client.get(
             reverse(
-                    'posts:post_detail',
-                    kwargs={'post_id': FIRST_POST_ID}
+                'posts:post_detail',
+                kwargs={'post_id': FIRST_POST_ID}
             )
         )
         self.assertEqual(response.context.get('post').image, 'posts/small.gif')
