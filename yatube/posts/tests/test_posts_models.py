@@ -6,6 +6,7 @@ from ..models import Group, Post
 
 User = get_user_model()
 
+CUT_OFF = 15
 
 class PostModelTest(TestCase):
     @classmethod
@@ -29,7 +30,7 @@ class PostModelTest(TestCase):
         post = PostModelTest.post
         values = (
             (group.title, str(group)),
-            (post.text[:15], str(post)),
+            (post.text[:CUT_OFF], str(post)),
             (post._meta.get_field('text').help_text, 'Введите текст поста'),
             (post._meta.get_field('text').verbose_name, 'Текст'),
         )

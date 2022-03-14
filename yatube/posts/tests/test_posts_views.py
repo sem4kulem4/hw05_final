@@ -16,6 +16,9 @@ User = get_user_model()
 
 FIRST_PAGE_POSTS = 10
 SECOND_PAGE_POSTS = 4
+FIRST_POST_ID = 1
+FIRST_PAGE = 1
+SECOND_PAGE = 2
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
 
@@ -72,11 +75,11 @@ class ViewsTests(TestCase):
             ),
             'posts/post_detail.html': reverse(
                 'posts:post_detail',
-                kwargs={'post_id': 1}
+                kwargs={'post_id': FIRST_POST_ID}
             ),
         }
         cls.templates_and_pages_authorized = {
-            'posts:post_edit': {'post_id': 1},
+            'posts:post_edit': {'post_id': FIRST_POST_ID},
             'posts:post_create': {},
         }
 
@@ -112,7 +115,7 @@ class ViewsTests(TestCase):
             with self.subTest(url=url):
                 response = self.client.get(
                     reverse(url, kwargs=kwarg),
-                    {'page': 1}
+                    {'page': FIRST_PAGE}
                 )
                 self.assertEqual(
                     len(response.context['page_obj']),
@@ -120,7 +123,7 @@ class ViewsTests(TestCase):
                 )
                 response = (
                     self.client
-                        .get(reverse(url, kwargs=kwarg), {'page': 2})
+                        .get(reverse(url, kwargs=kwarg), {'page': SECOND_PAGE})
                 )
                 self.assertEqual(len(
                     response.context['page_obj']),
@@ -180,17 +183,3 @@ class ViewsTests(TestCase):
         content_third = response_third.content
         self.assertFalse(content_first == content_third)
 
-    def test_image(self):
-        form_data = {
-            'text': 'Тестовый введенный текст',
-            'image': self.uploaded
-        }
-        self.authorized_client.post(
-            reverse('posts:post_create'),
-            data=form_data,
-            follow=True
-        )
-        response = self.authorized_client.get(
-            reverse('posts:post_detail', kwargs={'post_id': 14})
-        )
-        self.assertEqual(response.context.get('post').image, 'posts/small.gif')
