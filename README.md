@@ -13,9 +13,6 @@ Yatube - лучшая социальная сеть для того, чтобы 
 git clone https://github.com/sem4kulem4/yatube_social_network
 ```
 
-```
-cd api_yamdb
-```
 
 Cоздать и активировать виртуальное окружение:
 
@@ -40,7 +37,6 @@ pip install -r requirements.txt
 Выполнить миграции:
 
 ```
-cd yatube_api
 python3 manage.py migrate
 ```
 
